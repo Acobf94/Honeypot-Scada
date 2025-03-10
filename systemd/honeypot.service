@@ -3,9 +3,9 @@ Description=Honeypot SCADA Simulator
 After=network.target
 
 [Service]
-User=azureuser
-WorkingDirectory=/home/azureuser/honeypot
-ExecStart=/usr/bin/python3 /home/azureuser/honeypot/honeypot.py
+User=abonilla
+WorkingDirectory=/home/abonilla/honeypot
+ExecStart=/usr/bin/python3 /home/abonilla/honeypot/honeypot.py
 Restart=always
 
 [Install]
