@@ -1,17 +1,38 @@
 import random
 import time
+import logging
+import os
+from pymodbus.server.sync import StartTcpServer
+from pymodbus.device import ModbusDeviceIdentification
+from pymodbus.datastore import ModbusSequentialDataBlock, ModbusSlaveContext, ModbusServerContext
+
+os.makedirs('/home/abonilla/honeypot/logs', exist_ok=True)
+
+logging.basicConfig(
+    filename='/home/abonilla/honeypot/logs/honeypot.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 class ModbusSimulator:
     def __init__(self):
-        self.device_id = 1
-        self.registers = {100: 0, 101: 0, 102: 0}  # Registros Modbus simples
+        self.store = ModbusSlaveContext(
+            di=ModbusSequentialDataBlock(0, [0]*100),
+            co=ModbusSequentialDataBlock(0, [0]*100),
+            hr=ModbusSequentialDataBlock(0, [0]*100),
+            ir=ModbusSequentialDataBlock(0, [0]*100))
+        self.context = ModbusServerContext(slaves=self.store, single=True)
+
+    def update_values(self):
+        while True:
+            address = random.randint(0, 99)
+            value = random.randint(0, 255)
+            self.store.setValues(3, address, [value])
+            logger.info(f"Dispositivo Modbus 1 - Registro {address}: {value}")
+            time.sleep(10)
 
     def start(self):
-        print("Simulando Modbus...")
-        while True:
-            # Simula la lectura/escritura de registros
-            register = random.choice(list(self.registers.keys()))
-            value = random.randint(0, 255)
-            self.registers[register] = value
-            print(f"Dispositivo Modbus {self.device_id} - Registro {register}: {value}")
-            time.sleep(10)  # Simula una nueva lectura cada 10 segundos
+        logger.info("Simulador Modbus iniciado en el puerto 502.")
+        StartTcpServer(self.context, address=("0.0.0.0", 502), defer_start=True)
+        self.update_values()

@@ -1,5 +1,16 @@
 import random
 import time
+import logging
+import os
+
+os.makedirs('/home/abonilla/honeypot/logs', exist_ok=True)
+
+logging.basicConfig(
+    filename='/home/abonilla/honeypot/logs/honeypot.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 class EthernetIPSimulator:
     def __init__(self):
@@ -7,9 +18,8 @@ class EthernetIPSimulator:
         self.status = "OK"
 
     def start(self):
-        print("Simulando Ethernet/IP...")
+        logger.info("Simulador Ethernet/IP iniciado.")
         while True:
-            # Simula el cambio de estado del dispositivo
             self.status = random.choice(["OK", "Fault", "Warning"])
-            print(f"Dispositivo Ethernet/IP {self.device_id} - Estado: {self.status}")
-            time.sleep(20)  # Simula una nueva lectura cada 20 segundos
+            logger.info(f"Dispositivo Ethernet/IP {self.device_id} - Estado: {self.status}")
+            time.sleep(20)
