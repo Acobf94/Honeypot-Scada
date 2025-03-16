@@ -1,8 +1,19 @@
 import time
 import threading
+import logging
+import os
 from simulators.modbus_simulator import ModbusSimulator
 from simulators.opcua_simulator import OpcuaSimulator
 from simulators.ethernet_ip_simulator import EthernetIPSimulator
+
+os.makedirs('/home/abonilla/honeypot/logs', exist_ok=True)
+
+logging.basicConfig(
+    filename='/home/abonilla/honeypot/logs/honeypot.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 class Honeypot:
     def __init__(self):
@@ -11,7 +22,7 @@ class Honeypot:
         self.ethernet_ip_simulator = EthernetIPSimulator()
 
     def start(self):
-        print("Iniciando el Honeypot SCADA...")
+        logger.info("Iniciando el Honeypot SCADA...")
 
         threading.Thread(target=self.modbus_simulator.start, daemon=True).start()
         threading.Thread(target=self.opcua_simulator.start, daemon=True).start()
