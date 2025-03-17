@@ -33,6 +33,6 @@ class ModbusSimulator:
             time.sleep(10)
 
     def start(self):
-        logger.info("Simulador Modbus iniciado en el puerto 502.")
-        StartTcpServer(self.context, address=("0.0.0.0", 502), defer_start=True)
+        logger.info("Simulador Modbus iniciado en el puerto 1502.")
+        StartTcpServer(self.context, address=("0.0.0.0", 1502))
         self.update_values()
