@@ -2,6 +2,7 @@ import random
 import time
 import logging
 import os
+import threading
 from pymodbus.server.sync import StartTcpServer
 from pymodbus.device import ModbusDeviceIdentification
 from pymodbus.datastore import ModbusSequentialDataBlock, ModbusSlaveContext, ModbusServerContext
@@ -32,7 +33,23 @@ class ModbusSimulator:
             logger.info(f"Dispositivo Modbus 1 - Registro {address}: {value}")
             time.sleep(10)
 
-    def start(self):
+    def start_server(self):
         logger.info("Simulador Modbus iniciado en el puerto 1502.")
         StartTcpServer(self.context, address=("0.0.0.0", 1502))
-        self.update_values()
+
+    def start(self):
+        # Iniciar el servidor en un hilo separado
+        server_thread = threading.Thread(target=self.start_server, daemon=True)
+        server_thread.start()
+
+        # Iniciar la actualización de valores en otro hilo
+        update_thread = threading.Thread(target=self.update_values, daemon=True)
+        update_thread.start()
+
+        # Esperar para mantener los hilos activos
+        while True:
+            time.sleep(60)
+
+if __name__ == "__main__":
+    simulator = ModbusSimulator()
+    simulator.start()
