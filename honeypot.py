@@ -6,10 +6,10 @@ from simulators.modbus_simulator import ModbusSimulator
 from simulators.opcua_simulator import OpcuaSimulator
 from simulators.ethernet_ip_simulator import EthernetIPSimulator
 
-os.makedirs('/home/abonilla/honeypot/logs', exist_ok=True)
+os.makedirs('/home/nombredeusuario/honeypot/logs', exist_ok=True)
 
 logging.basicConfig(
-    filename='/home/abonilla/honeypot/logs/honeypot.log',
+    filename='/home/nombredeusuario/honeypot/logs/honeypot.log',
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
