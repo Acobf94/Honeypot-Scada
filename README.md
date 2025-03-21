@@ -8,34 +8,111 @@ El honeypot SCADA simula dispositivos y comunicaciones de sistemas de control in
 
 - Simulación de **Modbus**, **OPC UA** y **Ethernet/IP**.
 - **Integración con Wazuh** para la detección avanzada de ataques y análisis en tiempo real.
-- Despliegue y configuración sencilla en **AWS** o **Azure**.
   
 Este proyecto tiene como objetivo crear un ambiente controlado para la detección y análisis de ataques a dispositivos SCADA.
 
-## Estructura del Proyecto
+## Requisitos
 
-### src/
-Contiene el código fuente principal del honeypot SCADA:
-- `honeypot.py`: El archivo principal que gestiona la simulación y la interacción con los protocolos.
-- `modbus_simulator.py`: Código que simula un dispositivo Modbus.
-- `opcua_simulator.py`: Código que simula un servidor OPC UA.
-- `ethernet_ip_simulator.py`: Código que simula un dispositivo Ethernet/IP.
+El honeypot ha sido probado en **Ubuntu 22.04**, y las siguientes dependencias son necesarias para su funcionamiento:
 
-### config/
-Archivos de configuración para el honeypot y su integración con Wazuh:
-- `honeypot_config.yaml`: Configuración general del honeypot.
-- `wazuh_config.json`: Configuración de reglas y alertas en Wazuh.
+- Python 3.8 o superior
+- Pip (para la instalación de dependencias)
+- Systemd (para gestionar el servicio del honeypot)
+- Wazuh (para la monitorización y gestión de logs)
 
-### scripts/
-Contiene scripts útiles para desplegar y monitorear el honeypot:
-- `deploy_aws.sh`: Script para desplegar el honeypot en AWS.
-- `monitor_honeypot.sh`: Script para monitorear el estado del honeypot.
+## Instalación
 
-### logs/
-Carpeta que contiene logs generados durante la ejecución del honeypot. Esta carpeta no se sube a GitHub, pero es útil para la revisión del funcionamiento del sistema.
+Sigue los pasos a continuación para montar el honeypot en tu sistema Ubuntu 22.04.
 
-### requirements.txt
-Este archivo contiene las dependencias necesarias para ejecutar el proyecto. Para instalar las dependencias, simplemente ejecuta:
+### Paso 1: Clonar el Repositorio
+
+Primero, clona este repositorio en tu máquina:
 
 ```bash
-pip install -r requirements.txt
+git clone https://github.com/nombredeusuario/Honeypot-Scada.git
+cd Honeypot-Scada
+```
+
+### Paso 2: Instalar Dependencias
+
+Asegúrate de tener `pip` instalado en tu sistema. Luego, instala las dependencias necesarias listadas en el archivo `requirements.txt`:
+
+```bash
+sudo apt update
+sudo apt install python3-pip
+pip3 install -r requirements.txt
+```
+
+### Paso 3: Configurar el Servicio con systemd
+
+Para ejecutar el honeypot como un servicio en Ubuntu, sigue estos pasos:
+
+1. Copia el archivo `honeypot.service` en el directorio de systemd:
+
+   ```bash
+   sudo cp systemd/honeypot.service /etc/systemd/system/
+   ```
+
+2. Recarga el demonio de systemd para que reconozca el nuevo servicio:
+
+   ```bash
+   sudo systemctl daemon-reload
+   ```
+
+3. Habilita el servicio para que se inicie automáticamente al arrancar el sistema:
+
+   ```bash
+   sudo systemctl enable honeypot.service
+   ```
+
+4. Inicia el servicio:
+
+   ```bash
+   sudo systemctl start honeypot.service
+   ```
+
+5. Verifica el estado del servicio:
+
+   ```bash
+   sudo systemctl status honeypot.service
+   ```
+
+### Paso 4: Configuración de los Simuladores
+
+El proyecto incluye simuladores de diferentes protocolos SCADA. Asegúrate de que cada simulador esté configurado correctamente. Los simuladores se encuentran en el directorio `simulators`.
+
+- Modbus: El archivo principal es `modbus_simulator.py`. Asegúrate de que la configuración de puertos y direcciones IP sea la adecuada para tu red.
+
+```bash
+cd simulators
+python3 modbus_simulator.py
+```
+
+### Paso 5: Configuración de Wazuh
+
+Si deseas integrar el honeypot con Wazuh para la gestión de logs y la detección de ataques, sigue estos pasos:
+
+1. Instala Wazuh en tu máquina siguiendo [esta guía oficial](https://documentation.wazuh.com/current/installation-guide/index.html).
+2. Configura Wazuh para monitorear los logs generados por el honeypot.
+
+### Paso 6: Monitorización y Análisis
+
+Una vez que el honeypot esté funcionando y Wazuh esté configurado, los ataques y eventos serán registrados en los logs del sistema y podrás analizarlos a través de la interfaz de Wazuh o cualquier otra herramienta que utilices para analizar logs.
+
+## Uso
+
+Para ejecutar el honeypot manualmente, puedes usar el siguiente comando:
+
+```bash
+python3 honeypot.py
+```
+
+El script escuchará los puertos configurados para los protocolos SCADA (Modbus, OPC UA, Ethernet/IP) y generará logs con los ataques detectados.
+
+## Contribuciones
+
+Si deseas contribuir al proyecto, por favor abre un "pull request" con las mejoras o correcciones que desees hacer. Si encuentras algún error o tienes sugerencias, no dudes en abrir un "issue".
+
+## Licencia
+
+Este proyecto está bajo la licencia MIT. Puedes ver más detalles en el archivo [LICENSE](LICENSE).
