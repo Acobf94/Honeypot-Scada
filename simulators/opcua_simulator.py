@@ -4,10 +4,10 @@ import logging
 import os
 from opcua import Server
 
-os.makedirs('/home/abonilla/honeypot/logs', exist_ok=True)
+os.makedirs('/home/nombredeusuario/honeypot/logs', exist_ok=True)
 
 logging.basicConfig(
-    filename='/home/abonilla/honeypot/logs/honeypot.log',
+    filename='/home/nombredeusuario/honeypot/logs/honeypot.log',
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
